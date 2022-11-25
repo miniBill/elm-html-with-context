@@ -1,4 +1,4 @@
-# html-with-context
+# Elm-html-with-context
 
 This library wraps [`elm/core`](https://package.elm-lang.org/packages/elm/core/latest/) to provide a global context available while building the view.
 
