@@ -1,7 +1,7 @@
-module Html.WithContext.Lazy exposing (apply1, apply2, apply3, apply4, apply5, apply6, lazy, lazy2, lazy3, lazy4, lazy5, lazy6)
+module Html.WithContext.Lazy exposing (lazy, lazy2, lazy3, lazy4, lazy5, lazy6)
 
 {-| 
-@docs apply6, apply5, apply4, apply3, apply2, apply1, lazy6, lazy5, lazy4, lazy3, lazy2, lazy
+@docs lazy6, lazy5, lazy4, lazy3, lazy2, lazy
 -}
 
 

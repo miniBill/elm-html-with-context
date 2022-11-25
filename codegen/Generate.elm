@@ -143,6 +143,7 @@ toHtml : Elm.Declaration
 toHtml =
     Gen.Html.WithContext.Internal.values_.runHtml
         |> Elm.declaration "toHtml"
+        |> Elm.withDocumentation "Turn an `Html context msg` from elm-html-with-context into an `Html.msg` from elm/html"
         |> Elm.expose
 
 
@@ -150,6 +151,7 @@ withContext : Elm.Declaration
 withContext =
     Gen.Html.WithContext.Internal.values_.withContext
         |> Elm.declaration "withContext"
+        |> Elm.withDocumentation "Use the context passed in to create an Html node"
         |> Elm.expose
 
 
@@ -157,6 +159,7 @@ withContextAttribute : Elm.Declaration
 withContextAttribute =
     Gen.Html.WithContext.Internal.values_.withContextAttribute
         |> Elm.declaration "withContextAttribute"
+        |> Elm.withDocumentation "Use the context passed in to create an Html attribute"
         |> Elm.expose
 
 
@@ -201,7 +204,6 @@ applyXForLazy n =
                 |> Elm.withType (Gen.Html.annotation_.html (Type.var "msg"))
         )
         |> Elm.declaration ("apply" ++ String.fromInt n)
-        |> Elm.expose
 
 
 convertDeclaration :

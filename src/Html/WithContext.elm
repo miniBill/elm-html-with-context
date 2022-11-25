@@ -808,16 +808,19 @@ menu attrs children =
     node "menu" attrs children
 
 
+{-| Turn an `Html context msg` from elm-html-with-context into an `Html.msg` from elm/html -}
 toHtml : context -> Html context msg -> Html.Html msg
 toHtml =
     Internal.runHtml
 
 
+{-| Use the context passed in to create an Html node -}
 withContext : (context -> Html context msg) -> Html context msg
 withContext =
     Internal.withContext
 
 
+{-| Use the context passed in to create an Html attribute -}
 withContextAttribute :
     (context -> Attribute context msg) -> Attribute context msg
 withContextAttribute =
