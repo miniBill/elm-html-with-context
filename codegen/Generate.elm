@@ -122,17 +122,62 @@ helperToFile file =
             , ( [ "Json", "Decode" ], "Json" )
             ]
         }
-        (customDeclarations moduleName ++ declarations)
+        (declarations ++ customDeclarations moduleName)
 
 
 customDeclarations : List String -> List Elm.Declaration
 customDeclarations moduleName =
     case moduleName of
-        [ "Html", "WithContext" ] ->
-            []
+        [ "Html", "WithContext", "Lazy" ] ->
+            List.range 1 6
+                |> List.map applyXForLazy
 
         _ ->
             []
+
+
+applyXForLazy : Int -> Elm.Declaration
+applyXForLazy n =
+    let
+        letterArgs : List ( String, Maybe Type.Annotation )
+        letterArgs =
+            lettersRange n
+
+        argList : List ( String, Maybe Type.Annotation )
+        argList =
+            ( "context", Just <| Type.var "context" )
+                :: ( "fn", annotation )
+                :: letterArgs
+
+        annotation : Maybe Type.Annotation
+        annotation =
+            Type.function
+                (List.filterMap Tuple.second letterArgs)
+                (htmlAnnotation False)
+                |> Just
+    in
+    Elm.function argList
+        (\args ->
+            Gen.Html.WithContext.Internal.runHtml
+                (Elm.value
+                    { importFrom = []
+                    , name = "context"
+                    , annotation = Just <| Type.var "context"
+                    }
+                )
+                (Elm.apply
+                    (Elm.value
+                        { importFrom = []
+                        , name = "fn"
+                        , annotation = annotation
+                        }
+                    )
+                    (List.drop 2 args)
+                )
+                |> Elm.withType (Gen.Html.annotation_.html (Type.var "msg"))
+        )
+        |> Elm.declaration ("apply" ++ String.fromInt n)
+        |> Elm.expose
 
 
 convertDeclaration :
@@ -221,7 +266,7 @@ convertFunction moduleName { name, typeAnnotation } =
     let
         expression : Maybe Elm.Expression
         expression =
-            case ( Node.value name, toSimpleType typeAnnotation ) of
+            case ( functionName, simpleType ) of
                 ( "call_", _ ) ->
                     Nothing
 
@@ -246,7 +291,7 @@ convertFunction moduleName { name, typeAnnotation } =
                             Just mapAttribute
 
                         _ ->
-                            Gen.Debug.todo ("no idea how to handle `map` in module " ++ String.join "." moduleName) |> Just
+                            error ()
 
                 ( "node", _ ) ->
                     case moduleName of
@@ -257,7 +302,7 @@ convertFunction moduleName { name, typeAnnotation } =
                             Just keyedNode
 
                         _ ->
-                            Gen.Debug.todo ("no idea how to handle `node` in module " ++ String.join "." moduleName) |> Just
+                            error ()
 
                 ( n, Just (TFunction (TNamed [] "List" [ TNamed [] "Attribute" [ TVar "msg" ] ]) (TFunction (TNamed [] "List" [ _ ]) (TNamed [] "Html" [ TVar "msg" ]))) ) ->
                     case moduleName of
@@ -268,8 +313,7 @@ convertFunction moduleName { name, typeAnnotation } =
                             Just <| genericKeyedNode n
 
                         _ ->
-                            Gen.Debug.todo ("no idea how to handle `" ++ n ++ "` in module " ++ String.join "." moduleName)
-                                |> Just
+                            error ()
 
                 ( n, Just (TFunction s (TNamed [] "Attribute" [ TVar "msg" ])) ) ->
                     case moduleName of
@@ -280,8 +324,7 @@ convertFunction moduleName { name, typeAnnotation } =
                             Just <| event1 s n
 
                         _ ->
-                            Gen.Debug.todo ("no idea how to handle `" ++ n ++ "` in module " ++ String.join "." moduleName)
-                                |> Just
+                            error ()
 
                 ( n, Just (TFunction a (TFunction b (TNamed [] "Attribute" [ TVar "msg" ]))) ) ->
                     case moduleName of
@@ -292,29 +335,110 @@ convertFunction moduleName { name, typeAnnotation } =
                             Just <| event2 a b n
 
                         _ ->
-                            Gen.Debug.todo ("no idea how to handle `" ++ n ++ "` in module " ++ String.join "." moduleName)
-                                |> Just
+                            error ()
 
-                ( n, Just ((TNamed [ "Json" ] "Decoder" [ _ ]) as t) ) ->
+                ( n, Just (TNamed [ "Json" ] "Decoder" [ _ ]) ) ->
                     case moduleName of
                         [ "Html", "WithContext", "Events" ] ->
                             Just
                                 (Elm.value
                                     { importFrom = [ "Html", "Events" ]
                                     , name = n
-                                    , annotation = Just <| simpleTypeToAnnotation t
+                                    , annotation = Maybe.map simpleTypeToAnnotation simpleType
                                     }
                                 )
 
                         _ ->
-                            Gen.Debug.todo ("no idea how to handle `" ++ n ++ "` in module " ++ String.join "." moduleName)
-                                |> Just
+                            error ()
 
-                ( n, t ) ->
-                    Gen.Debug.todo ("no idea how to handle `" ++ n ++ "` of type " ++ Maybe.withDefault "?" (Maybe.map typeToString t) ++ " in module " ++ String.join "." moduleName)
-                        |> Just
+                ( n, Just (TFunction from to) ) ->
+                    if String.startsWith "lazy" n then
+                        lazy n from to
+
+                    else
+                        error ()
+
+                _ ->
+                    error ()
+
+        functionName : String
+        functionName =
+            Node.value name
+
+        simpleType : Maybe SimpleType
+        simpleType =
+            toSimpleType typeAnnotation
+
+        error : () -> Maybe Elm.Expression
+        error () =
+            Gen.Debug.todo ("no idea how to handle `" ++ functionName ++ "` of type " ++ Maybe.withDefault "?" (Maybe.map typeToString simpleType) ++ " in module " ++ String.join "." moduleName)
+                |> Just
     in
     Maybe.map (Elm.declaration (Node.value name)) expression
+
+
+lazy : String -> SimpleType -> SimpleType -> Maybe Elm.Expression
+lazy name from _ =
+    let
+        maybeArity : Maybe Int
+        maybeArity =
+            case name of
+                "lazy" ->
+                    Just 1
+
+                "lazy7" ->
+                    -- Because we use two parameters for the context and `applyX` we can't wrap `lazy7`
+                    Nothing
+
+                "lazy8" ->
+                    -- Because we use two parameters for the context and `applyX` we can't wrap `lazy8`
+                    Nothing
+
+                _ ->
+                    String.toInt (String.dropLeft 4 name)
+    in
+    Maybe.map
+        (\arity ->
+            let
+                argList =
+                    lettersRange arity
+                        |> (::) ( "ctor", Just <| simpleTypeToAnnotation from )
+            in
+            Elm.function argList
+                (\args ->
+                    Gen.Html.WithContext.Internal.make_.html
+                        (Elm.fn ( "context", Nothing ) <|
+                            \context ->
+                                Elm.apply
+                                    (Elm.value
+                                        { importFrom = [ "Html", "Lazy" ]
+                                        , name = "lazy" ++ String.fromInt (arity + 2)
+                                        , annotation = Nothing
+                                        }
+                                    )
+                                    (Elm.val ("apply" ++ String.fromInt arity)
+                                        :: context
+                                        :: args
+                                    )
+                        )
+                        |> Elm.withType (htmlAnnotation False)
+                )
+        )
+        maybeArity
+
+
+lettersRange : Int -> List ( String, Maybe Type.Annotation )
+lettersRange arity =
+    List.range 0 (arity - 1)
+        |> List.map
+            (\i ->
+                let
+                    letter : String
+                    letter =
+                        String.fromChar <| Char.fromCode (Char.toCode 'a' + i)
+                in
+                ( letter, Just <| Type.var letter )
+            )
 
 
 attribute1 : SimpleType -> String -> Elm.Expression
@@ -424,6 +548,9 @@ simpleTypeToAnnotation type_ =
 
         TNamed [ "Json" ] "Decoder" args ->
             Type.namedWith [ "Json", "Decode" ] "Decoder" (List.map simpleTypeToAnnotation args)
+
+        TNamed [] "Html" args ->
+            Type.namedWith [ "Html", "WithContext" ] "Html" (Type.var "context" :: List.map simpleTypeToAnnotation args)
 
         TNamed mod name args ->
             Type.namedWith mod name (List.map simpleTypeToAnnotation args)
@@ -710,7 +837,7 @@ htmlAnnotation sameModule =
             []
 
          else
-            [ "Html.WithContext" ]
+            [ "Html", "WithContext" ]
         )
         "Html"
         [ Type.var "context", Type.var "msg" ]
