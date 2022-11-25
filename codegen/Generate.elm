@@ -255,6 +255,9 @@ convertDeclaration exposingSet moduleName declaration =
                         Nothing ->
                             identity
 
+                        Just "{-|-}" ->
+                            Elm.withDocumentation "-"
+
                         Just d ->
                             Elm.withDocumentation (String.slice 3 -3 d)
                    )

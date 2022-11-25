@@ -34,6 +34,7 @@ node name attrs children =
         )
 
 
+{-|-}
 ol :
     List (Html.WithContext.Attribute context msg)
     -> List ( String, Html.WithContext.Html context msg )
@@ -42,6 +43,7 @@ ol attrs children =
     node "ol" attrs children
 
 
+{-|-}
 ul :
     List (Html.WithContext.Attribute context msg)
     -> List ( String, Html.WithContext.Html context msg )

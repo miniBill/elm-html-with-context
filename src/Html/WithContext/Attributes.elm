@@ -172,6 +172,7 @@ dropzone arg =
     Internal.Attribute (\_ -> Html.Attributes.dropzone arg)
 
 
+{-|-}
 itemprop : String -> Html.WithContext.Attribute context msg
 itemprop arg =
     Internal.Attribute (\_ -> Html.Attributes.itemprop arg)

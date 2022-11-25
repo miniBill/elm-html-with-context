@@ -121,31 +121,37 @@ aside attrs children =
     node "aside" attrs children
 
 
+{-|-}
 h1 : List (Attribute context msg) -> List (Html context msg) -> Html context msg
 h1 attrs children =
     node "h1" attrs children
 
 
+{-|-}
 h2 : List (Attribute context msg) -> List (Html context msg) -> Html context msg
 h2 attrs children =
     node "h2" attrs children
 
 
+{-|-}
 h3 : List (Attribute context msg) -> List (Html context msg) -> Html context msg
 h3 attrs children =
     node "h3" attrs children
 
 
+{-|-}
 h4 : List (Attribute context msg) -> List (Html context msg) -> Html context msg
 h4 attrs children =
     node "h4" attrs children
 
 
+{-|-}
 h5 : List (Attribute context msg) -> List (Html context msg) -> Html context msg
 h5 attrs children =
     node "h5" attrs children
 
 
+{-|-}
 h6 : List (Attribute context msg) -> List (Html context msg) -> Html context msg
 h6 attrs children =
     node "h6" attrs children

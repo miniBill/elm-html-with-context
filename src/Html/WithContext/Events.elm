@@ -11,41 +11,49 @@ import Html.WithContext.Internal as Internal
 import Json.Decode as Json
 
 
+{-|-}
 onClick : msg -> Html.WithContext.Attribute context msg
 onClick arg =
     Internal.Attribute (\_ -> Html.Events.onClick arg)
 
 
+{-|-}
 onDoubleClick : msg -> Html.WithContext.Attribute context msg
 onDoubleClick arg =
     Internal.Attribute (\_ -> Html.Events.onDoubleClick arg)
 
 
+{-|-}
 onMouseDown : msg -> Html.WithContext.Attribute context msg
 onMouseDown arg =
     Internal.Attribute (\_ -> Html.Events.onMouseDown arg)
 
 
+{-|-}
 onMouseUp : msg -> Html.WithContext.Attribute context msg
 onMouseUp arg =
     Internal.Attribute (\_ -> Html.Events.onMouseUp arg)
 
 
+{-|-}
 onMouseEnter : msg -> Html.WithContext.Attribute context msg
 onMouseEnter arg =
     Internal.Attribute (\_ -> Html.Events.onMouseEnter arg)
 
 
+{-|-}
 onMouseLeave : msg -> Html.WithContext.Attribute context msg
 onMouseLeave arg =
     Internal.Attribute (\_ -> Html.Events.onMouseLeave arg)
 
 
+{-|-}
 onMouseOver : msg -> Html.WithContext.Attribute context msg
 onMouseOver arg =
     Internal.Attribute (\_ -> Html.Events.onMouseOver arg)
 
 
+{-|-}
 onMouseOut : msg -> Html.WithContext.Attribute context msg
 onMouseOut arg =
     Internal.Attribute (\_ -> Html.Events.onMouseOut arg)
@@ -93,11 +101,13 @@ onSubmit arg =
     Internal.Attribute (\_ -> Html.Events.onSubmit arg)
 
 
+{-|-}
 onBlur : msg -> Html.WithContext.Attribute context msg
 onBlur arg =
     Internal.Attribute (\_ -> Html.Events.onBlur arg)
 
 
+{-|-}
 onFocus : msg -> Html.WithContext.Attribute context msg
 onFocus arg =
     Internal.Attribute (\_ -> Html.Events.onFocus arg)
