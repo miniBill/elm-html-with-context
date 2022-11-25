@@ -1,6 +1,6 @@
 # Elm-html-with-context
 
-This library wraps [`elm/core`](https://package.elm-lang.org/packages/elm/core/latest/) to provide a global context available while building the view.
+This library wraps [`elm/html`](https://package.elm-lang.org/packages/elm/html/latest/) to provide a global context available while building the view.
 
 A context is a global, _constant or mostly constant_ object. It can be used to store those things that you will need _almost everywhere_ in your `view` but don't change often, or at all.
 
