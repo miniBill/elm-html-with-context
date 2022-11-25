@@ -132,8 +132,32 @@ customDeclarations moduleName =
             List.range 1 6
                 |> List.map applyXForLazy
 
+        [ "Html", "WithContext" ] ->
+            [ toHtml, withContext, withContextAttribute ]
+
         _ ->
             []
+
+
+toHtml : Elm.Declaration
+toHtml =
+    Gen.Html.WithContext.Internal.values_.runHtml
+        |> Elm.declaration "toHtml"
+        |> Elm.expose
+
+
+withContext : Elm.Declaration
+withContext =
+    Gen.Html.WithContext.Internal.values_.withContext
+        |> Elm.declaration "withContext"
+        |> Elm.expose
+
+
+withContextAttribute : Elm.Declaration
+withContextAttribute =
+    Gen.Html.WithContext.Internal.values_.withContextAttribute
+        |> Elm.declaration "withContextAttribute"
+        |> Elm.expose
 
 
 applyXForLazy : Int -> Elm.Declaration

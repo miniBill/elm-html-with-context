@@ -1,7 +1,7 @@
-module Html.WithContext exposing (Attribute, Html, a, abbr, address, article, aside, audio, b, bdi, bdo, blockquote, br, button, canvas, caption, cite, code, col, colgroup, datalist, dd, del, details, dfn, div, dl, dt, em, embed, fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6, header, hr, i, iframe, img, input, ins, kbd, label, legend, li, main_, map, mark, math, menu, menuitem, meter, nav, node, object, ol, optgroup, option, output, p, param, pre, progress, q, rp, rt, ruby, s, samp, section, select, small, source, span, strong, sub, summary, sup, table, tbody, td, text, textarea, tfoot, th, thead, time, tr, track, u, ul, var, video, wbr)
+module Html.WithContext exposing (Attribute, Html, a, abbr, address, article, aside, audio, b, bdi, bdo, blockquote, br, button, canvas, caption, cite, code, col, colgroup, datalist, dd, del, details, dfn, div, dl, dt, em, embed, fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6, header, hr, i, iframe, img, input, ins, kbd, label, legend, li, main_, map, mark, math, menu, menuitem, meter, nav, node, object, ol, optgroup, option, output, p, param, pre, progress, q, rp, rt, ruby, s, samp, section, select, small, source, span, strong, sub, summary, sup, table, tbody, td, text, textarea, tfoot, th, thead, time, toHtml, tr, track, u, ul, var, video, wbr, withContext, withContextAttribute)
 
 {-| 
-@docs menu, menuitem, summary, details, meter, progress, output, textarea, option, optgroup, datalist, select, button, input, label, legend, fieldset, form, th, td, tr, tfoot, thead, tbody, col, colgroup, caption, table, math, canvas, track, source, audio, video, param, object, embed, iframe, img, del, ins, wbr, br, span, bdo, bdi, rp, rt, ruby, mark, u, b, i, sup, sub, kbd, samp, var, code, time, abbr, dfn, q, cite, s, small, strong, em, a, div, figcaption, figure, dd, dt, dl, li, ul, ol, blockquote, pre, hr, p, main_, address, footer, header, h6, h5, h4, h3, h2, h1, aside, article, nav, section, map, text, node, Attribute, Html
+@docs withContextAttribute, withContext, toHtml, menu, menuitem, summary, details, meter, progress, output, textarea, option, optgroup, datalist, select, button, input, label, legend, fieldset, form, th, td, tr, tfoot, thead, tbody, col, colgroup, caption, table, math, canvas, track, source, audio, video, param, object, embed, iframe, img, del, ins, wbr, br, span, bdo, bdi, rp, rt, ruby, mark, u, b, i, sup, sub, kbd, samp, var, code, time, abbr, dfn, q, cite, s, small, strong, em, a, div, figcaption, figure, dd, dt, dl, li, ul, ol, blockquote, pre, hr, p, main_, address, footer, header, h6, h5, h4, h3, h2, h1, aside, article, nav, section, map, text, node, Attribute, Html
 -}
 
 
@@ -800,5 +800,21 @@ menu :
     List (Attribute context msg) -> List (Html context msg) -> Html context msg
 menu attrs children =
     node "menu" attrs children
+
+
+toHtml : context -> Html context msg -> Html.Html msg
+toHtml =
+    Internal.runHtml
+
+
+withContext : (context -> Html context msg) -> Html context msg
+withContext =
+    Internal.withContext
+
+
+withContextAttribute :
+    (context -> Attribute context msg) -> Attribute context msg
+withContextAttribute =
+    Internal.withContextAttribute
 
 

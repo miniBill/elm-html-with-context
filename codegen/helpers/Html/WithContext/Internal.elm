@@ -1,4 +1,4 @@
-module Html.WithContext.Internal exposing (Attribute(..), Html(..), runAttribute, runHtml)
+module Html.WithContext.Internal exposing (Attribute(..), Html(..), runAttribute, runHtml, withContext, withContextAttribute)
 
 import Html
 
@@ -19,3 +19,13 @@ runHtml context (Html f) =
 runAttribute : context -> Attribute context msg -> Html.Attribute msg
 runAttribute context (Attribute f) =
     f context
+
+
+withContext : (context -> Html context msg) -> Html context msg
+withContext f =
+    Html (\context -> runHtml context <| f context)
+
+
+withContextAttribute : (context -> Attribute context msg) -> Attribute context msg
+withContextAttribute f =
+    Attribute (\context -> runAttribute context <| f context)
