@@ -87,7 +87,8 @@ deciding if this is what you want.
 -}
 map : (a -> b) -> Html context a -> Html context b
 map f child =
-    Internal.Html (\context -> Html.map f (Internal.runHtml context child))
+    Internal.Html
+        (\context -> VirtualDom.map f (Internal.runHtml context child))
 
 
 {-| Defines a section in a document. -}

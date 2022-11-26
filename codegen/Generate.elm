@@ -618,7 +618,7 @@ map =
             Gen.Html.WithContext.Internal.make_.html <|
                 Elm.fn ( "context", Nothing )
                     (\context ->
-                        Gen.Html.call_.map
+                        Gen.VirtualDom.call_.map
                             f
                             (Gen.Html.WithContext.Internal.runHtml context n)
                     )
@@ -649,7 +649,7 @@ mapAttribute =
             Gen.Html.WithContext.Internal.make_.attribute <|
                 Elm.fn ( "context", Nothing )
                     (\context ->
-                        Gen.Html.Attributes.call_.map
+                        Gen.VirtualDom.call_.mapAttribute
                             f
                             (Gen.Html.WithContext.Internal.runAttribute context n)
                     )

@@ -10,6 +10,7 @@ import Html.Attributes
 import Html.WithContext
 import Html.WithContext.Internal as Internal
 import Json.Encode as Json
+import VirtualDom
 
 
 {-| Specify a style.
@@ -98,7 +99,9 @@ map :
     -> Html.WithContext.Attribute context b
 map f attr =
     Internal.Attribute
-        (\context -> Html.Attributes.map f (Internal.runAttribute context attr))
+        (\context ->
+            VirtualDom.mapAttribute f (Internal.runAttribute context attr)
+        )
 
 
 {-| Often used with CSS to style elements with common properties.
