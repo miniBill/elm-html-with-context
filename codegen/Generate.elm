@@ -14,8 +14,6 @@ import Elm.Syntax.Signature exposing (Signature)
 import Elm.Syntax.TypeAnnotation as TypeAnnotation
 import Gen.CodeGen.Generate as Generate
 import Gen.Debug
-import Gen.Html
-import Gen.Html.Attributes
 import Gen.Html.WithContext.Internal
 import Gen.List
 import Gen.VirtualDom
