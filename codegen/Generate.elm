@@ -672,7 +672,7 @@ text =
         (\content ->
             Gen.Html.WithContext.Internal.make_.html <|
                 Elm.fn ( "_", Nothing )
-                    (\_ -> Gen.Html.call_.text content)
+                    (\_ -> Gen.VirtualDom.call_.text content)
         )
         |> Elm.withType (Type.function [ Type.string ] (htmlAnnotation True))
 

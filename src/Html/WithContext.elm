@@ -7,6 +7,7 @@ module Html.WithContext exposing (Attribute, Html, a, abbr, address, article, as
 
 import Html
 import Html.WithContext.Internal as Internal
+import VirtualDom
 
 
 {-| The core building block used to build up HTML. Here we create an `Html`
@@ -59,7 +60,7 @@ exactly as you specify.
 -}
 text : String -> Html context msg
 text content =
-    Internal.Html (\_ -> Html.text content)
+    Internal.Html (\_ -> VirtualDom.text content)
 
 
 {-| Transform the messages produced by some `Html`. In the following example,
