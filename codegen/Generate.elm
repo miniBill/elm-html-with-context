@@ -16,9 +16,9 @@ import Gen.CodeGen.Generate as Generate
 import Gen.Debug
 import Gen.Html
 import Gen.Html.Attributes
-import Gen.Html.Keyed
 import Gen.Html.WithContext.Internal
 import Gen.List
+import Gen.VirtualDom
 import Maybe.Extra
 import Result.Extra
 import Set exposing (Set)
