@@ -6,7 +6,7 @@ A context is a global, _constant or mostly constant_ object. It can be used to s
 
 Examples of things you could want to put in the context:
 
-1. theme (dark/light/custom) - this is needed almost everwhere for colors, and styles, and changes very rarely;
+1. theme (dark/light/custom) - this is needed almost everywhere for colors, and styles, and changes very rarely;
 2. language - this is needed for every single label for localization, and changes rarely or never;
 3. timezone - this is needed to display local times for the user, and mostly doesn't change;
 4. responsive class (phone/tablet/desktop) - this doesn't usually change (unless the user dramatically resizes the window);
