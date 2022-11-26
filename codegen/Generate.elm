@@ -24,6 +24,11 @@ import Result.Extra
 import Set exposing (Set)
 
 
+namespace : List String
+namespace =
+    [ "Html", "WithContext" ]
+
+
 main : Program String () ()
 main =
     Generate.fromText toFiles
@@ -37,7 +42,7 @@ toFiles helperFiles =
             |> Result.Extra.combineMap parseHelper
     of
         Err err ->
-            [ Elm.file [ "Html" ]
+            [ Elm.file namespace
                 [ Gen.Debug.todo "failed"
                     |> Elm.declaration "failed"
                     |> Elm.withDocumentation err
@@ -104,7 +109,7 @@ helperToFile file =
 
         moduleName : List String
         moduleName =
-            [ "Html", "WithContext" ] ++ List.drop 1 originalModuleName
+            namespace ++ List.drop 1 originalModuleName
 
         declarations : List Elm.Declaration
         declarations =
@@ -118,7 +123,7 @@ helperToFile file =
     Elm.fileWith moduleName
         { docs = List.map Elm.docs
         , aliases =
-            [ ( [ "Html", "WithContext", "Internal" ], "Internal" )
+            [ ( namespace ++ [ "Internal" ], "Internal" )
             , ( [ "Json", "Encode" ], "Json" )
             , ( [ "Json", "Decode" ], "Json" )
             ]
@@ -128,12 +133,12 @@ helperToFile file =
 
 customDeclarations : List String -> List Elm.Declaration
 customDeclarations moduleName =
-    case moduleName of
-        [ "Html", "WithContext", "Lazy" ] ->
+    case List.drop (List.length namespace) moduleName of
+        [ "Lazy" ] ->
             List.range 1 6
                 |> List.map applyXForLazy
 
-        [ "Html", "WithContext" ] ->
+        [] ->
             [ toHtml, withContext, withContextAttribute ]
 
         _ ->
@@ -313,63 +318,63 @@ convertFunction moduleName { name, typeAnnotation } =
                     Just text
 
                 ( "map", _ ) ->
-                    case moduleName of
-                        [ "Html", "WithContext" ] ->
+                    case List.drop (List.length namespace) moduleName of
+                        [] ->
                             Just map
 
-                        [ "Html", "WithContext", "Attributes" ] ->
+                        [ "Attributes" ] ->
                             Just mapAttribute
 
                         _ ->
                             error ()
 
                 ( "node", _ ) ->
-                    case moduleName of
-                        [ "Html", "WithContext" ] ->
+                    case List.drop (List.length namespace) moduleName of
+                        [] ->
                             Just node
 
-                        [ "Html", "WithContext", "Keyed" ] ->
+                        [ "Keyed" ] ->
                             Just keyedNode
 
                         _ ->
                             error ()
 
                 ( n, Just (TFunction (TNamed [] "List" [ TNamed [] "Attribute" [ TVar "msg" ] ]) (TFunction (TNamed [] "List" [ _ ]) (TNamed [] "Html" [ TVar "msg" ]))) ) ->
-                    case moduleName of
-                        [ "Html", "WithContext" ] ->
+                    case List.drop (List.length namespace) moduleName of
+                        [] ->
                             Just <| genericNode n
 
-                        [ "Html", "WithContext", "Keyed" ] ->
+                        [ "Keyed" ] ->
                             Just <| genericKeyedNode n
 
                         _ ->
                             error ()
 
                 ( n, Just (TFunction s (TNamed [] "Attribute" [ TVar "msg" ])) ) ->
-                    case moduleName of
-                        [ "Html", "WithContext", "Attributes" ] ->
+                    case List.drop (List.length namespace) moduleName of
+                        [ "Attributes" ] ->
                             Just <| attribute1 s n
 
-                        [ "Html", "WithContext", "Events" ] ->
+                        [ "Events" ] ->
                             Just <| event1 s n
 
                         _ ->
                             error ()
 
                 ( n, Just (TFunction a (TFunction b (TNamed [] "Attribute" [ TVar "msg" ]))) ) ->
-                    case moduleName of
-                        [ "Html", "WithContext", "Attributes" ] ->
+                    case List.drop (List.length namespace) moduleName of
+                        [ "Attributes" ] ->
                             Just <| attribute2 a b n
 
-                        [ "Html", "WithContext", "Events" ] ->
+                        [ "Events" ] ->
                             Just <| event2 a b n
 
                         _ ->
                             error ()
 
-                ( n, Just (TNamed [ "Json" ] "Decoder" [ _ ]) ) ->
-                    case moduleName of
-                        [ "Html", "WithContext", "Events" ] ->
+                ( n, Just ((TNamed [ "Json" ] "Decoder" [ _ ]) as t) ) ->
+                    case List.drop (List.length namespace) moduleName of
+                        [ "Events" ] ->
                             Just
                                 (eventDecoder n t)
 
@@ -493,7 +498,7 @@ attribute1 argType name =
                             [ arg ]
                     )
                 )
-                |> Elm.withType (Type.namedWith [ "Html", "WithContext" ] "Attribute" [ Type.var "context", Type.var "msg" ])
+                |> Elm.withType (Type.namedWith namespace "Attribute" [ Type.var "context", Type.var "msg" ])
         )
 
 
@@ -515,7 +520,7 @@ event1 argType name =
                             [ arg ]
                     )
                 )
-                |> Elm.withType (Type.namedWith [ "Html", "WithContext" ] "Attribute" [ Type.var "context", Type.var "msg" ])
+                |> Elm.withType (Type.namedWith namespace "Attribute" [ Type.var "context", Type.var "msg" ])
         )
 
 
@@ -538,7 +543,7 @@ attribute2 argType1 argType2 name =
                             [ arg1, arg2 ]
                     )
                 )
-                |> Elm.withType (Type.namedWith [ "Html", "WithContext" ] "Attribute" [ Type.var "context", Type.var "msg" ])
+                |> Elm.withType (Type.namedWith namespace "Attribute" [ Type.var "context", Type.var "msg" ])
         )
 
 
@@ -561,7 +566,7 @@ event2 argType1 argType2 name =
                             [ arg1, arg2 ]
                     )
                 )
-                |> Elm.withType (Type.namedWith [ "Html", "WithContext" ] "Attribute" [ Type.var "context", Type.var "msg" ])
+                |> Elm.withType (Type.namedWith namespace "Attribute" [ Type.var "context", Type.var "msg" ])
         )
 
 
@@ -584,7 +589,7 @@ simpleTypeToAnnotation type_ =
             Type.namedWith [ "Json", "Decode" ] "Decoder" (List.map simpleTypeToAnnotation args)
 
         TNamed [] "Html" args ->
-            Type.namedWith [ "Html", "WithContext" ] "Html" (Type.var "context" :: List.map simpleTypeToAnnotation args)
+            Type.namedWith namespace "Html" (Type.var "context" :: List.map simpleTypeToAnnotation args)
 
         TNamed mod name args ->
             Type.namedWith mod name (List.map simpleTypeToAnnotation args)
@@ -653,12 +658,12 @@ mapAttribute =
             (Type.function [ Type.function [ Type.var "a" ] (Type.var "b") ]
                 (Type.function
                     [ Type.namedWith
-                        [ "Html", "WithContext" ]
+                        namespace
                         "Attribute"
                         [ Type.var "context", Type.var "a" ]
                     ]
                     (Type.namedWith
-                        [ "Html", "WithContext" ]
+                        namespace
                         "Attribute"
                         [ Type.var "context", Type.var "b" ]
                     )
@@ -877,7 +882,7 @@ htmlAnnotation sameModule =
             []
 
          else
-            [ "Html", "WithContext" ]
+            namespace
         )
         "Html"
         [ Type.var "context", Type.var "msg" ]
@@ -890,7 +895,7 @@ attributeAnnotation sameModule =
             []
 
          else
-            [ "Html.WithContext" ]
+            namespace
         )
         "Attribute"
         [ Type.var "context", Type.var "msg" ]
