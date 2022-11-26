@@ -75,6 +75,7 @@ helperToFile file =
                 Module.EffectModule data ->
                     ( Node.value data.moduleName, Node.value data.exposingList )
 
+        exposingSet : Set String
         exposingSet =
             case exposing_ of
                 Exposing.All _ ->
@@ -143,7 +144,7 @@ toHtml : Elm.Declaration
 toHtml =
     Gen.Html.WithContext.Internal.values_.runHtml
         |> Elm.declaration "toHtml"
-        |> Elm.withDocumentation "Turn an `Html context msg` from elm-html-with-context into an `Html.msg` from elm/html"
+        |> Elm.withDocumentation "Turn an `Html context msg` from elm-html-with-context into an `Html msg` from elm/html"
         |> Elm.expose
 
 
@@ -159,7 +160,7 @@ withContextAttribute : Elm.Declaration
 withContextAttribute =
     Gen.Html.WithContext.Internal.values_.withContextAttribute
         |> Elm.declaration "withContextAttribute"
-        |> Elm.withDocumentation "Use the context passed in to create an Html attribute"
+        |> Elm.withDocumentation "Use the context passed in to create an Attribute"
         |> Elm.expose
 
 
@@ -370,12 +371,7 @@ convertFunction moduleName { name, typeAnnotation } =
                     case moduleName of
                         [ "Html", "WithContext", "Events" ] ->
                             Just
-                                (Elm.value
-                                    { importFrom = [ "Html", "Events" ]
-                                    , name = n
-                                    , annotation = Maybe.map simpleTypeToAnnotation simpleType
-                                    }
-                                )
+                                (eventDecoder n t)
 
                         _ ->
                             error ()
@@ -404,6 +400,15 @@ convertFunction moduleName { name, typeAnnotation } =
                 |> Just
     in
     Maybe.map (Elm.declaration (Node.value name)) expression
+
+
+eventDecoder : String -> SimpleType -> Elm.Expression
+eventDecoder n simpleType =
+    Elm.value
+        { importFrom = [ "Html", "Events" ]
+        , name = n
+        , annotation = Just <| simpleTypeToAnnotation simpleType
+        }
 
 
 lazy : String -> SimpleType -> SimpleType -> Maybe Elm.Expression
@@ -750,7 +755,13 @@ genericNode name =
         ( "children", Nothing )
         (\attrs children ->
             Elm.apply (Elm.val "node")
-                [ Elm.string name
+                [ Elm.string
+                    (if name == "main_" then
+                        "main"
+
+                     else
+                        name
+                    )
                 , attrs
                 , children
                 ]

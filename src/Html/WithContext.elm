@@ -188,7 +188,7 @@ address attrs children =
 main_ :
     List (Attribute context msg) -> List (Html context msg) -> Html context msg
 main_ attrs children =
-    node "main_" attrs children
+    node "main" attrs children
 
 
 {-| Defines a portion that should be displayed as a paragraph. -}
@@ -808,7 +808,7 @@ menu attrs children =
     node "menu" attrs children
 
 
-{-| Turn an `Html context msg` from elm-html-with-context into an `Html.msg` from elm/html -}
+{-| Turn an `Html context msg` from elm-html-with-context into an `Html msg` from elm/html -}
 toHtml : context -> Html context msg -> Html.Html msg
 toHtml =
     Internal.runHtml
@@ -820,7 +820,7 @@ withContext =
     Internal.withContext
 
 
-{-| Use the context passed in to create an Html attribute -}
+{-| Use the context passed in to create an Attribute -}
 withContextAttribute :
     (context -> Attribute context msg) -> Attribute context msg
 withContextAttribute =
