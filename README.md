@@ -123,4 +123,4 @@ This also has the advantage that you can "force" a particular theme in places th
 
 ---
 
-You should also have a look at [the original README](https://package.elm-lang.org/packages/elm/core/latest/).
+You should also have a look at [the original README](https://package.elm-lang.org/packages/elm/html/latest/).
