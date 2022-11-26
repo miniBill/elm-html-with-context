@@ -207,7 +207,7 @@ applyXForLazy n =
                     )
                     (List.drop 2 args)
                 )
-                |> Elm.withType (Gen.Html.annotation_.html (Type.var "msg"))
+                |> Elm.withType (Gen.VirtualDom.annotation_.node (Type.var "msg"))
         )
         |> Elm.declaration ("apply" ++ String.fromInt n)
 

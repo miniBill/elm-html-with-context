@@ -88,7 +88,10 @@ lazy6 ctor a b c d e f =
 
 
 apply1 :
-    context -> (a -> Html.WithContext.Html context msg) -> a -> Html.Html msg
+    context
+    -> (a -> Html.WithContext.Html context msg)
+    -> a
+    -> VirtualDom.Node msg
 apply1 context fn a =
     Internal.runHtml context (fn a)
 
@@ -98,7 +101,7 @@ apply2 :
     -> (a -> b -> Html.WithContext.Html context msg)
     -> a
     -> b
-    -> Html.Html msg
+    -> VirtualDom.Node msg
 apply2 context fn a b =
     Internal.runHtml context (fn a b)
 
@@ -109,7 +112,7 @@ apply3 :
     -> a
     -> b
     -> c
-    -> Html.Html msg
+    -> VirtualDom.Node msg
 apply3 context fn a b c =
     Internal.runHtml context (fn a b c)
 
@@ -121,7 +124,7 @@ apply4 :
     -> b
     -> c
     -> d
-    -> Html.Html msg
+    -> VirtualDom.Node msg
 apply4 context fn a b c d =
     Internal.runHtml context (fn a b c d)
 
@@ -134,7 +137,7 @@ apply5 :
     -> c
     -> d
     -> e
-    -> Html.Html msg
+    -> VirtualDom.Node msg
 apply5 context fn a b c d e =
     Internal.runHtml context (fn a b c d e)
 
@@ -148,7 +151,7 @@ apply6 :
     -> d
     -> e
     -> f
-    -> Html.Html msg
+    -> VirtualDom.Node msg
 apply6 context fn a b c d e f =
     Internal.runHtml context (fn a b c d e f)
 
