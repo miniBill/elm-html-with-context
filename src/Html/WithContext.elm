@@ -46,7 +46,7 @@ node :
 node name attrs children =
     Internal.Html
         (\context ->
-            Html.node
+            VirtualDom.node
                 name
                 (List.map (Internal.runAttribute context) attrs)
                 (List.map (Internal.runHtml context) children)

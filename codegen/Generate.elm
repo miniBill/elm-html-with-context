@@ -726,7 +726,7 @@ node =
             Gen.Html.WithContext.Internal.make_.html <|
                 Elm.fn ( "context", Nothing )
                     (\context ->
-                        Gen.Html.call_.node
+                        Gen.VirtualDom.call_.node
                             nodeName
                             (Gen.List.call_.map
                                 (Elm.functionReduced "attr" <| Gen.Html.WithContext.Internal.runAttribute context)
