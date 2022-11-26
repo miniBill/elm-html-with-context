@@ -445,7 +445,7 @@ lazy name from _ =
                             \context ->
                                 Elm.apply
                                     (Elm.value
-                                        { importFrom = [ "Html", "Lazy" ]
+                                        { importFrom = [ "VirtualDom" ]
                                         , name = "lazy" ++ String.fromInt (arity + 2)
                                         , annotation = Nothing
                                         }

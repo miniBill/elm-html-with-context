@@ -6,9 +6,9 @@ module Html.WithContext.Lazy exposing (lazy, lazy2, lazy3, lazy4, lazy5, lazy6)
 
 
 import Html
-import Html.Lazy
 import Html.WithContext
 import Html.WithContext.Internal as Internal
+import VirtualDom
 
 
 {-| A performance optimization that delays the building of virtual DOM nodes.
@@ -24,7 +24,7 @@ lazy :
     -> a
     -> Html.WithContext.Html context msg
 lazy ctor a =
-    Internal.Html (\context -> Html.Lazy.lazy3 apply1 context ctor a)
+    Internal.Html (\context -> VirtualDom.lazy3 apply1 context ctor a)
 
 
 {-| Same as `lazy` but checks on two arguments. -}
@@ -34,7 +34,7 @@ lazy2 :
     -> b
     -> Html.WithContext.Html context msg
 lazy2 ctor a b =
-    Internal.Html (\context -> Html.Lazy.lazy4 apply2 context ctor a b)
+    Internal.Html (\context -> VirtualDom.lazy4 apply2 context ctor a b)
 
 
 {-| Same as `lazy` but checks on three arguments. -}
@@ -45,7 +45,7 @@ lazy3 :
     -> c
     -> Html.WithContext.Html context msg
 lazy3 ctor a b c =
-    Internal.Html (\context -> Html.Lazy.lazy5 apply3 context ctor a b c)
+    Internal.Html (\context -> VirtualDom.lazy5 apply3 context ctor a b c)
 
 
 {-| Same as `lazy` but checks on four arguments. -}
@@ -57,7 +57,7 @@ lazy4 :
     -> d
     -> Html.WithContext.Html context msg
 lazy4 ctor a b c d =
-    Internal.Html (\context -> Html.Lazy.lazy6 apply4 context ctor a b c d)
+    Internal.Html (\context -> VirtualDom.lazy6 apply4 context ctor a b c d)
 
 
 {-| Same as `lazy` but checks on five arguments. -}
@@ -70,7 +70,7 @@ lazy5 :
     -> e
     -> Html.WithContext.Html context msg
 lazy5 ctor a b c d e =
-    Internal.Html (\context -> Html.Lazy.lazy7 apply5 context ctor a b c d e)
+    Internal.Html (\context -> VirtualDom.lazy7 apply5 context ctor a b c d e)
 
 
 {-| Same as `lazy` but checks on six arguments. -}
@@ -84,7 +84,7 @@ lazy6 :
     -> f
     -> Html.WithContext.Html context msg
 lazy6 ctor a b c d e f =
-    Internal.Html (\context -> Html.Lazy.lazy8 apply6 context ctor a b c d e f)
+    Internal.Html (\context -> VirtualDom.lazy8 apply6 context ctor a b c d e f)
 
 
 apply1 :
