@@ -687,7 +687,7 @@ keyedNode =
             Gen.Html.WithContext.Internal.make_.html <|
                 Elm.fn ( "context", Nothing )
                     (\context ->
-                        Gen.Html.Keyed.call_.node
+                        Gen.VirtualDom.call_.keyedNode
                             nodeName
                             (Gen.List.call_.map
                                 (Elm.functionReduced "attr" <| Gen.Html.WithContext.Internal.runAttribute context)

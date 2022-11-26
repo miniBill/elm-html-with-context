@@ -6,9 +6,9 @@ module Html.WithContext.Keyed exposing (node, ol, ul)
 
 
 import Html
-import Html.Keyed
 import Html.WithContext
 import Html.WithContext.Internal as Internal
+import VirtualDom
 
 
 {-| Works just like `Html.node`, but you add a unique identifier to each child
@@ -24,7 +24,7 @@ node :
 node name attrs children =
     Internal.Html
         (\context ->
-            Html.Keyed.node
+            VirtualDom.keyedNode
                 name
                 (List.map (Internal.runAttribute context) attrs)
                 (List.map
