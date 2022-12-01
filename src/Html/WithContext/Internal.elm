@@ -1,14 +1,15 @@
 module Html.WithContext.Internal exposing (Attribute(..), Html(..), runAttribute, runHtml, withContext, withContextAttribute)
 
 import Html
+import VirtualDom
 
 
 type Html context msg
-    = Html (context -> Html.Html msg)
+    = Html (context -> VirtualDom.Node msg)
 
 
 type Attribute context msg
-    = Attribute (context -> Html.Attribute msg)
+    = Attribute (context -> VirtualDom.Attribute msg)
 
 
 runHtml : context -> Html context msg -> Html.Html msg
