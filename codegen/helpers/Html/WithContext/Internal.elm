@@ -33,8 +33,8 @@ withContextAttribute f =
 
 
 html : Html.Html msg -> Html context msg
-html = always >> Html
+html h = Html (\_ -> h)
 
 
 htmlAttribute : Html.Attribute msg -> Attribute context msg
-htmlAttribute = always >> Attribute
+htmlAttribute attr = Attribute (\_ -> attr)  
