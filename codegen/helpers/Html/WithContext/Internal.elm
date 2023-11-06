@@ -1,4 +1,4 @@
-module Html.WithContext.Internal exposing (Attribute(..), Html(..), runAttribute, runHtml, withContext, withContextAttribute)
+module Html.WithContext.Internal exposing (Attribute(..), Html(..), runAttribute, runHtml, withContext, withContextAttribute, html, htmlAttribute)
 
 import Html
 import VirtualDom
@@ -30,3 +30,11 @@ withContext f =
 withContextAttribute : (context -> Attribute context msg) -> Attribute context msg
 withContextAttribute f =
     Attribute (\context -> runAttribute context <| f context)
+
+
+html : Html.Html msg -> Html context msg
+html = always >> Html
+
+
+htmlAttribute : Html.Attribute msg -> Attribute context msg
+htmlAttribute = always >> Attribute
