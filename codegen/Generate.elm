@@ -3,8 +3,6 @@ module Generate exposing (main)
 import Elm
 import Elm.Annotation as Type
 import Elm.Parser
-import Elm.Processing
-import Elm.RawFile as RawFile
 import Elm.Syntax.Declaration as Declaration
 import Elm.Syntax.Exposing as Exposing
 import Elm.Syntax.File as File
@@ -14,6 +12,7 @@ import Elm.Syntax.Signature exposing (Signature)
 import Elm.Syntax.TypeAnnotation as TypeAnnotation
 import Gen.CodeGen.Generate as Generate
 import Gen.Debug
+import Gen.Html
 import Gen.Html.WithContext.Internal
 import Gen.List
 import Gen.VirtualDom
@@ -47,21 +46,8 @@ toFiles helperFiles =
                 ]
             ]
 
-        Ok rawHelpers ->
-            let
-                context : Elm.Processing.ProcessContext
-                context =
-                    List.foldl Elm.Processing.addFile Elm.Processing.init rawHelpers
-            in
-            List.map
-                (\rawHelper ->
-                    let
-                        helper =
-                            Elm.Processing.process context rawHelper
-                    in
-                    helperToFile helper
-                )
-                rawHelpers
+        Ok helpers ->
+            List.map helperToFile helpers
 
 
 helperToFile : File.File -> Elm.File
@@ -143,9 +129,35 @@ customDeclarations moduleName =
             []
 
 
+contextAnn : Type.Annotation
+contextAnn =
+    Type.var "context"
+
+
+htmlCtxMsgAnn : Type.Annotation
+htmlCtxMsgAnn =
+    Type.namedWith [] "Html" [ contextAnn, Type.var "msg" ]
+
+
+attributeCtxMsgAnn : Type.Annotation
+attributeCtxMsgAnn =
+    Type.namedWith [] "Attribute" [ contextAnn, Type.var "msg" ]
+
+
+htmlMsgAnn : Type.Annotation
+htmlMsgAnn =
+    Gen.Html.annotation_.html (Type.var "msg")
+
+
+attributeMsgAnn : Type.Annotation
+attributeMsgAnn =
+    Gen.Html.annotation_.attribute (Type.var "msg")
+
+
 toHtml : Elm.Declaration
 toHtml =
     Gen.Html.WithContext.Internal.values_.runHtml
+        |> Elm.withType (Type.function [ contextAnn, htmlCtxMsgAnn ] htmlMsgAnn)
         |> Elm.declaration "toHtml"
         |> Elm.withDocumentation "Turn an `Html context msg` from elm-html-with-context into an `Html msg` from elm/html"
         |> Elm.expose
@@ -154,6 +166,7 @@ toHtml =
 withContext : Elm.Declaration
 withContext =
     Gen.Html.WithContext.Internal.values_.withContext
+        |> Elm.withType (Type.function [ Type.function [ contextAnn ] htmlCtxMsgAnn ] htmlCtxMsgAnn)
         |> Elm.declaration "withContext"
         |> Elm.withDocumentation "Use the context passed in to create an Html node"
         |> Elm.expose
@@ -162,6 +175,7 @@ withContext =
 withContextAttribute : Elm.Declaration
 withContextAttribute =
     Gen.Html.WithContext.Internal.values_.withContextAttribute
+        |> Elm.withType (Type.function [ Type.function [ contextAnn ] attributeCtxMsgAnn ] attributeCtxMsgAnn)
         |> Elm.declaration "withContextAttribute"
         |> Elm.withDocumentation "Use the context passed in to create an Attribute"
         |> Elm.expose
@@ -170,6 +184,7 @@ withContextAttribute =
 html : Elm.Declaration
 html =
     Gen.Html.WithContext.Internal.values_.html
+        |> Elm.withType (Type.function [ htmlMsgAnn ] htmlCtxMsgAnn)
         |> Elm.declaration "html"
         |> Elm.withDocumentation "Turn an `Html msg` from elm/html into an `Html context msg` from elm-html-with-context"
         |> Elm.expose
@@ -178,6 +193,7 @@ html =
 htmlAttribute : Elm.Declaration
 htmlAttribute =
     Gen.Html.WithContext.Internal.values_.htmlAttribute
+        |> Elm.withType (Type.function [ attributeMsgAnn ] attributeCtxMsgAnn)
         |> Elm.declaration "htmlAttribute"
         |> Elm.withDocumentation "Turn an `Attribute msg` from elm/html into an `Attribute context msg` from elm-html-with-context"
         |> Elm.expose
@@ -915,7 +931,7 @@ attributeAnnotation sameModule =
         [ Type.var "context", Type.var "msg" ]
 
 
-parseHelper : String -> Result String RawFile.RawFile
+parseHelper : String -> Result String File.File
 parseHelper fragment =
     let
         helperCode : String
@@ -938,5 +954,5 @@ parseHelper fragment =
             helperCode
                 |> String.slice (String.length "module Gen.") (exposingIndex - 1)
     in
-    Elm.Parser.parse helperCode
+    Elm.Parser.parseToFile helperCode
         |> Result.mapError (\_ -> "Error parsing the source file for " ++ moduleName)
