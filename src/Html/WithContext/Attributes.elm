@@ -1,7 +1,7 @@
 module Html.WithContext.Attributes exposing (accept, acceptCharset, accesskey, action, align, alt, attribute, autocomplete, autofocus, autoplay, checked, cite, class, classList, cols, colspan, contenteditable, contextmenu, controls, coords, datetime, default, dir, disabled, download, draggable, dropzone, enctype, for, form, headers, height, hidden, href, hreflang, id, ismap, itemprop, kind, lang, list, loop, manifest, map, max, maxlength, media, method, min, minlength, multiple, name, novalidate, pattern, ping, placeholder, poster, preload, property, pubdate, readonly, rel, required, reversed, rows, rowspan, sandbox, scope, selected, shape, size, spellcheck, src, srcdoc, srclang, start, step, style, tabindex, target, title, type_, usemap, value, width, wrap)
 
 {-| 
-@docs manifest, scope, rowspan, headers, colspan, start, reversed, pubdate, datetime, rel, ping, media, hreflang, download, target, href, cite, align, coords, shape, usemap, ismap, wrap, rows, cols, step, min, max, form, for, size, required, readonly, pattern, novalidate, name, multiple, method, maxlength, minlength, list, enctype, disabled, autofocus, autocomplete, action, acceptCharset, accept, selected, placeholder, checked, value, type_, srcdoc, sandbox, srclang, kind, default, poster, preload, loop, controls, autoplay, alt, width, height, src, tabindex, spellcheck, lang, itemprop, dropzone, draggable, dir, contextmenu, contenteditable, accesskey, title, id, hidden, class, map, attribute, property, classList, style
+@docs style, classList, property, attribute, map, class, hidden, id, title, accesskey, contenteditable, contextmenu, dir, draggable, dropzone, itemprop, lang, spellcheck, tabindex, src, height, width, alt, autoplay, controls, loop, preload, poster, default, kind, srclang, sandbox, srcdoc, type_, value, checked, placeholder, selected, accept, acceptCharset, action, autocomplete, autofocus, disabled, enctype, list, minlength, maxlength, method, multiple, name, novalidate, pattern, readonly, required, size, for, form, max, min, step, cols, rows, wrap, ismap, usemap, shape, coords, align, cite, href, target, download, hreflang, media, ping, rel, datetime, pubdate, reversed, start, colspan, headers, rowspan, scope, manifest
 -}
 
 
@@ -731,5 +731,3 @@ scope arg =
 manifest : String -> Html.WithContext.Attribute context msg
 manifest arg =
     Internal.Attribute (\_ -> Html.Attributes.manifest arg)
-
-

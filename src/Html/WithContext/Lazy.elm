@@ -1,7 +1,7 @@
 module Html.WithContext.Lazy exposing (lazy, lazy2, lazy3, lazy4, lazy5, lazy6)
 
 {-| 
-@docs lazy6, lazy5, lazy4, lazy3, lazy2, lazy
+@docs lazy, lazy2, lazy3, lazy4, lazy5, lazy6
 -}
 
 
@@ -154,5 +154,3 @@ apply6 :
     -> VirtualDom.Node msg
 apply6 context fn a b c d e f =
     Internal.runHtml context (fn a b c d e f)
-
-

@@ -1,7 +1,7 @@
 module Html.WithContext.Events exposing (custom, keyCode, on, onBlur, onCheck, onClick, onDoubleClick, onFocus, onInput, onMouseDown, onMouseEnter, onMouseLeave, onMouseOut, onMouseOver, onMouseUp, onSubmit, preventDefaultOn, stopPropagationOn, targetChecked, targetValue)
 
 {-| 
-@docs keyCode, targetChecked, targetValue, custom, preventDefaultOn, stopPropagationOn, on, onFocus, onBlur, onSubmit, onCheck, onInput, onMouseOut, onMouseOver, onMouseLeave, onMouseEnter, onMouseUp, onMouseDown, onDoubleClick, onClick
+@docs onClick, onDoubleClick, onMouseDown, onMouseUp, onMouseEnter, onMouseLeave, onMouseOver, onMouseOut, onInput, onCheck, onSubmit, onBlur, onFocus, on, stopPropagationOn, preventDefaultOn, custom, targetValue, targetChecked, keyCode
 -}
 
 
@@ -263,5 +263,3 @@ helpers here for `onKeyUp`, `onKeyDown`, `onKeyPress`, etc.
 keyCode : Json.Decoder Int
 keyCode =
     Html.Events.keyCode
-
-

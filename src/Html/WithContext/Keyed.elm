@@ -1,7 +1,7 @@
 module Html.WithContext.Keyed exposing (node, ol, ul)
 
 {-| 
-@docs ul, ol, node
+@docs node, ol, ul
 -}
 
 
@@ -50,5 +50,3 @@ ul :
     -> Html.WithContext.Html context msg
 ul attrs children =
     node "ul" attrs children
-
-
