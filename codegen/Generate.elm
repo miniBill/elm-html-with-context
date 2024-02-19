@@ -14,6 +14,8 @@ import Gen.CodeGen.Generate as Generate
 import Gen.Debug
 import Gen.Html
 import Gen.Html.WithContext.Internal
+import Gen.Json.Decode
+import Gen.Json.Encode
 import Gen.List
 import Gen.VirtualDom
 import Maybe.Extra
@@ -134,16 +136,6 @@ contextAnn =
     Type.var "context"
 
 
-htmlCtxMsgAnn : Type.Annotation
-htmlCtxMsgAnn =
-    Type.namedWith [] "Html" [ contextAnn, Type.var "msg" ]
-
-
-attributeCtxMsgAnn : Type.Annotation
-attributeCtxMsgAnn =
-    Type.namedWith [] "Attribute" [ contextAnn, Type.var "msg" ]
-
-
 htmlMsgAnn : Type.Annotation
 htmlMsgAnn =
     Gen.Html.annotation_.html (Type.var "msg")
@@ -157,7 +149,7 @@ attributeMsgAnn =
 toHtml : Elm.Declaration
 toHtml =
     Gen.Html.WithContext.Internal.values_.runHtml
-        |> Elm.withType (Type.function [ contextAnn, htmlCtxMsgAnn ] htmlMsgAnn)
+        |> Elm.withType (Type.function [ contextAnn, htmlAnnotation True ] htmlMsgAnn)
         |> Elm.declaration "toHtml"
         |> Elm.withDocumentation "Turn an `Html context msg` from elm-html-with-context into an `Html msg` from elm/html"
         |> Elm.expose
@@ -166,7 +158,7 @@ toHtml =
 withContext : Elm.Declaration
 withContext =
     Gen.Html.WithContext.Internal.values_.withContext
-        |> Elm.withType (Type.function [ Type.function [ contextAnn ] htmlCtxMsgAnn ] htmlCtxMsgAnn)
+        |> Elm.withType (Type.function [ Type.function [ contextAnn ] (htmlAnnotation True) ] (htmlAnnotation True))
         |> Elm.declaration "withContext"
         |> Elm.withDocumentation "Use the context passed in to create an Html node"
         |> Elm.expose
@@ -175,7 +167,7 @@ withContext =
 withContextAttribute : Elm.Declaration
 withContextAttribute =
     Gen.Html.WithContext.Internal.values_.withContextAttribute
-        |> Elm.withType (Type.function [ Type.function [ contextAnn ] attributeCtxMsgAnn ] attributeCtxMsgAnn)
+        |> Elm.withType (Type.function [ Type.function [ contextAnn ] (attributeAnnotation True) ] (attributeAnnotation True))
         |> Elm.declaration "withContextAttribute"
         |> Elm.withDocumentation "Use the context passed in to create an Attribute"
         |> Elm.expose
@@ -184,7 +176,7 @@ withContextAttribute =
 html : Elm.Declaration
 html =
     Gen.Html.WithContext.Internal.values_.html
-        |> Elm.withType (Type.function [ htmlMsgAnn ] htmlCtxMsgAnn)
+        |> Elm.withType (Type.function [ htmlMsgAnn ] (htmlAnnotation True))
         |> Elm.declaration "html"
         |> Elm.withDocumentation "Turn an `Html msg` from elm/html into an `Html context msg` from elm-html-with-context"
         |> Elm.expose
@@ -193,7 +185,7 @@ html =
 htmlAttribute : Elm.Declaration
 htmlAttribute =
     Gen.Html.WithContext.Internal.values_.htmlAttribute
-        |> Elm.withType (Type.function [ attributeMsgAnn ] attributeCtxMsgAnn)
+        |> Elm.withType (Type.function [ attributeMsgAnn ] (attributeAnnotation True))
         |> Elm.declaration "htmlAttribute"
         |> Elm.withDocumentation "Turn an `Attribute msg` from elm/html into an `Attribute context msg` from elm-html-with-context"
         |> Elm.expose
@@ -528,7 +520,7 @@ attribute1 argType name =
                             [ arg ]
                     )
                 )
-                |> Elm.withType (Type.namedWith namespace "Attribute" [ Type.var "context", Type.var "msg" ])
+                |> Elm.withType (attributeAnnotation False)
         )
 
 
@@ -550,7 +542,7 @@ event1 argType name =
                             [ arg ]
                     )
                 )
-                |> Elm.withType (Type.namedWith namespace "Attribute" [ Type.var "context", Type.var "msg" ])
+                |> Elm.withType (attributeAnnotation False)
         )
 
 
@@ -573,7 +565,7 @@ attribute2 argType1 argType2 name =
                             [ arg1, arg2 ]
                     )
                 )
-                |> Elm.withType (Type.namedWith namespace "Attribute" [ Type.var "context", Type.var "msg" ])
+                |> Elm.withType (attributeAnnotation False)
         )
 
 
@@ -596,7 +588,7 @@ event2 argType1 argType2 name =
                             [ arg1, arg2 ]
                     )
                 )
-                |> Elm.withType (Type.namedWith namespace "Attribute" [ Type.var "context", Type.var "msg" ])
+                |> Elm.withType (attributeAnnotation False)
         )
 
 
@@ -613,13 +605,13 @@ simpleTypeToAnnotation type_ =
             Type.function [ simpleTypeToAnnotation f ] (simpleTypeToAnnotation t)
 
         TNamed [ "Json" ] "Value" [] ->
-            Type.namedWith [ "Json", "Encode" ] "Value" []
+            Gen.Json.Encode.annotation_.value
 
-        TNamed [ "Json" ] "Decoder" args ->
-            Type.namedWith [ "Json", "Decode" ] "Decoder" (List.map simpleTypeToAnnotation args)
+        TNamed [ "Json" ] "Decoder" [ arg ] ->
+            Gen.Json.Decode.annotation_.decoder (simpleTypeToAnnotation arg)
 
-        TNamed [] "Html" args ->
-            Type.namedWith namespace "Html" (Type.var "context" :: List.map simpleTypeToAnnotation args)
+        TNamed [] "Html" [ arg ] ->
+            Type.namedWith namespace "Html" [ Type.var "context", simpleTypeToAnnotation arg ]
 
         TNamed mod name args ->
             Type.namedWith mod name (List.map simpleTypeToAnnotation args)
