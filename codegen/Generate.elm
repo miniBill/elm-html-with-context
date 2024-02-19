@@ -166,6 +166,7 @@ withContextAttribute =
         |> Elm.withDocumentation "Use the context passed in to create an Attribute"
         |> Elm.expose
 
+
 html : Elm.Declaration
 html =
     Gen.Html.WithContext.Internal.values_.html
@@ -173,12 +174,14 @@ html =
         |> Elm.withDocumentation "Turn an `Html msg` from elm/html into an `Html context msg` from elm-html-with-context"
         |> Elm.expose
 
+
 htmlAttribute : Elm.Declaration
 htmlAttribute =
     Gen.Html.WithContext.Internal.values_.htmlAttribute
         |> Elm.declaration "htmlAttribute"
         |> Elm.withDocumentation "Turn an `Attribute msg` from elm/html into an `Attribute context msg` from elm-html-with-context"
         |> Elm.expose
+
 
 applyXForLazy : Int -> Elm.Declaration
 applyXForLazy n =
